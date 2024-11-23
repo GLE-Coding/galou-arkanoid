@@ -182,70 +182,79 @@ export const Game: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-start p-4">
       <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-4" ref={containerRef}>
-        {/* Game Stats Bar */}
-        <div className="w-full max-w-2xl px-4">
-          <div className="bg-gray-800 rounded-lg p-3 flex justify-between items-center flex-wrap gap-2" style={{ touchAction: 'manipulation' }}>
-            <div className="text-purple-400 text-lg md:text-xl font-bold">Score: {score}</div>
-            <div className="text-purple-400 text-lg md:text-xl font-bold">Lives: {lives}</div>
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="text-green-400 text-lg md:text-xl font-bold">${money}</div>
-              <button
-                onClick={openShop}
-                onTouchStart={openShop}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
-                style={{ 
-                  touchAction: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitTouchCallout: 'none',
-                  WebkitUserSelect: 'none',
-                  pointerEvents: 'auto'
-                }}
-              >
-                <ShoppingBag size={20} />
-              </button>
-              <button
-                onClick={handleEscapePress}
-                onTouchStart={handleEscapePress}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
-                style={{ 
-                  touchAction: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitTouchCallout: 'none',
-                  WebkitUserSelect: 'none',
-                  pointerEvents: 'auto'
-                }}
-              >
-                <Home size={20} />
-              </button>
-              <button
-                onClick={handleInfoToggle}
-                onTouchStart={(e) => { e.preventDefault(); handleInfoToggle(); }}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
-                style={{ 
-                  touchAction: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitTouchCallout: 'none',
-                  WebkitUserSelect: 'none',
-                  pointerEvents: 'auto'
-                }}
-              >
-                <Info size={20} />
-              </button>
-              <button
-                onClick={handleMuteToggle}
-                onTouchStart={handleMuteToggle}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
-                style={{ 
-                  touchAction: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitTouchCallout: 'none',
-                  WebkitUserSelect: 'none',
-                  pointerEvents: 'auto'
-                }}
-              >
-                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-              </button>
-            </div>
+        {/* Game state and buttons container */}
+        <div className="w-full flex flex-row justify-between items-start">
+          {/* Game info (score, life, money) - Left aligned */}
+          <div className="flex flex-col items-start gap-1 pl-2">
+            <p className="text-sm md:text-base text-gray-200">
+              Score: <span className="text-purple-400">{score}</span>
+            </p>
+            <p className="text-sm md:text-base text-gray-200">
+              Life: <span className="text-purple-400">{lives}</span>
+            </p>
+            <p className="text-sm md:text-base text-gray-200">
+              Money: <span className="text-green-400">${money}</span>
+            </p>
+          </div>
+
+          {/* Game buttons - Right aligned */}
+          <div className="flex flex-row gap-2 pr-2">
+            <button
+              onClick={openShop}
+              onTouchStart={openShop}
+              className="bg-gray-700 hover:bg-gray-600 text-purple-400 hover:text-purple-300 transition-colors p-2 md:p-3 rounded-lg border border-gray-600 hover:border-purple-500 z-50"
+              style={{ 
+                touchAction: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                pointerEvents: 'auto'
+              }}
+            >
+              <ShoppingBag size={20} />
+            </button>
+            <button
+              onClick={handleEscapePress}
+              onTouchStart={handleEscapePress}
+              className="bg-gray-700 hover:bg-gray-600 text-purple-400 hover:text-purple-300 transition-colors p-2 md:p-3 rounded-lg border border-gray-600 hover:border-purple-500 z-50"
+              style={{ 
+                touchAction: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                pointerEvents: 'auto'
+              }}
+            >
+              <Home size={20} />
+            </button>
+            <button
+              onClick={handleInfoToggle}
+              onTouchStart={(e) => { e.preventDefault(); handleInfoToggle(); }}
+              className="bg-gray-700 hover:bg-gray-600 text-purple-400 hover:text-purple-300 transition-colors p-2 md:p-3 rounded-lg border border-gray-600 hover:border-purple-500 z-50"
+              style={{ 
+                touchAction: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                pointerEvents: 'auto'
+              }}
+            >
+              <Info size={20} />
+            </button>
+            <button
+              onClick={handleMuteToggle}
+              onTouchStart={handleMuteToggle}
+              className="bg-gray-700 hover:bg-gray-600 text-purple-400 hover:text-purple-300 transition-colors p-2 md:p-3 rounded-lg border border-gray-600 hover:border-purple-500 z-50"
+              style={{ 
+                touchAction: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                pointerEvents: 'auto'
+              }}
+            >
+              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
           </div>
         </div>
 
@@ -297,8 +306,8 @@ export const Game: React.FC = () => {
                         disabled={!paddleRef.current.stats.hasMissileLauncher || paddleRef.current.stats.missileAmmo <= 0}
                         className={`px-6 py-3 rounded-lg font-bold transition-colors z-50 ${
                           paddleRef.current.stats.hasMissileLauncher && paddleRef.current.stats.missileAmmo > 0
-                            ? 'bg-purple-600 text-white hover:bg-purple-500'
-                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            ? 'bg-gray-700 hover:bg-gray-600 text-purple-400 hover:text-purple-300 border border-gray-600 hover:border-purple-500'
+                            : 'bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600'
                         }`}
                         style={{ 
                           touchAction: 'none',
