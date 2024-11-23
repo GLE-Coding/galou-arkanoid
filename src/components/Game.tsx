@@ -237,14 +237,45 @@ export const Game: React.FC = () => {
                 />
 
                 {gameState === 'playing' && (
-                  <TouchControls
-                    onMove={(position) => paddleRef.current.setPosition(position * CANVAS_WIDTH)}
-                    onTap={() => {
-                      if (ballRef.current.launch()) {
-                        soundManagerRef.current.play('hit');
-                      }
-                    }}
-                  />
+                  <>
+                    <TouchControls
+                      onMove={(position) => paddleRef.current.setPosition(position * CANVAS_WIDTH)}
+                      onTap={() => {
+                        if (ballRef.current.launch()) {
+                          soundManagerRef.current.play('hit');
+                        }
+                      }}
+                    />
+                    <div className="absolute -bottom-16 left-4">
+                      <button
+                        onClick={() => {
+                          if (paddleRef.current.fireMissile(ballRef.current.getDamage())) {
+                            soundManagerRef.current.play('missile');
+                          }
+                        }}
+                        onTouchStart={() => {
+                          if (paddleRef.current.fireMissile(ballRef.current.getDamage())) {
+                            soundManagerRef.current.play('missile');
+                          }
+                        }}
+                        disabled={!paddleRef.current.stats.hasMissileLauncher || paddleRef.current.stats.missileAmmo <= 0}
+                        className={`px-6 py-3 rounded-lg font-bold transition-colors z-50 ${
+                          paddleRef.current.stats.hasMissileLauncher && paddleRef.current.stats.missileAmmo > 0
+                            ? 'bg-purple-600 text-white hover:bg-purple-500'
+                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        }`}
+                        style={{ 
+                          touchAction: 'none',
+                          WebkitTapHighlightColor: 'transparent',
+                          WebkitTouchCallout: 'none',
+                          WebkitUserSelect: 'none',
+                          pointerEvents: 'auto'
+                        }}
+                      >
+                        Fire ({paddleRef.current.stats.missileAmmo})
+                      </button>
+                    </div>
+                  </>
                 )}
 
                 {gameState === 'menu' && (

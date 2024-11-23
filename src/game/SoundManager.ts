@@ -28,23 +28,17 @@ export class SoundManager {
             const audio = new Audio();
             audio.src = url;
             audio.volume = 0.3;
-            
-            // Preload audio
-            audio.load();
-            await audio.play().catch(() => {});
-            audio.pause();
-            audio.currentTime = 0;
-            
+            audio.preload = 'auto';
             this.sounds[key] = audio;
           } catch (error) {
-            console.warn(`Failed to load sound ${key}:`, error);
+            // Silently fail if sound loading isn't possible
           }
         })
       );
 
       this.initialized = true;
     } catch (error) {
-      console.warn('Failed to initialize audio system:', error);
+      // Silently fail if initialization isn't possible
     }
   }
 
@@ -52,26 +46,27 @@ export class SoundManager {
     if (this.muted || !this.sounds[sound]) return;
 
     try {
-      // Resume AudioContext if it was suspended
-      if (this.audioContext?.state === 'suspended') {
-        this.audioContext.resume();
-      }
+      // Only try to play if the audio element exists
+      const audio = this.sounds[sound];
+      if (!audio) return;
 
-      // Create a new audio instance for each play
-      const audioClone = this.sounds[sound].cloneNode() as HTMLAudioElement;
-      audioClone.volume = 0.3;
+      // If the sound is already playing, don't try to play it again
+      if (!audio.paused && !audio.ended) return;
+
+      // Reset the audio to start
+      audio.currentTime = 0;
+      audio.volume = 0.3;
       
-      // Play the sound with promise handling
-      const playPromise = audioClone.play();
+      // Play the sound without creating new instances
+      const playPromise = audio.play();
       if (playPromise) {
-        playPromise.catch((error) => {
-          if (error.name !== 'NotAllowedError') {
-            console.warn(`Sound playback failed: ${error}`);
-          }
+        playPromise.catch(() => {
+          // Silently fail if playback isn't possible
+          // This prevents console errors on mobile
         });
       }
     } catch (error) {
-      console.warn(`Sound system error: ${error}`);
+      // Silently fail if sound playback isn't possible
     }
   }
 
