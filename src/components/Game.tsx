@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Volume2, VolumeX, ShoppingBag, Home, Info } from 'lucide-react';
+import { Volume2, VolumeX, ShoppingBag, Home, Info, X } from 'lucide-react';
 import { useGameState } from '../hooks/useGameState';
 import { useGameEntities } from '../hooks/useGameEntities';
 import { useCollisionSystem } from '../hooks/useCollisionSystem';
@@ -410,10 +410,18 @@ export const Game: React.FC = () => {
       
       {/* Info Dialog */}
       {showInfoDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 touch-none">
           <div className="bg-gray-800 p-6 rounded-lg border-2 border-purple-500 max-w-md w-full">
-            <h2 className="text-xl font-bold text-purple-400 mb-4">Game Controls</h2>
-            <div className="space-y-2 text-gray-300">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-purple-400">Game Controls</h2>
+              <button
+                onClick={handleInfoClose}
+                className="text-gray-400 hover:text-white transition-colors p-2"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="space-y-3 text-gray-300 text-lg">
               <p>🖱️ Move paddle with mouse</p>
               <p>👆 Use touch controls on mobile</p>
               <p>⌨️ Use arrow keys on keyboard</p>
@@ -425,9 +433,9 @@ export const Game: React.FC = () => {
             </div>
             <button
               onClick={handleInfoClose}
-              className="mt-6 w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-bold"
+              className="mt-8 w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors text-lg font-bold"
             >
-              Close
+              Continue Playing
             </button>
           </div>
         </div>
