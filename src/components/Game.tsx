@@ -158,30 +158,54 @@ export const Game: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-start p-4 touch-none select-none">
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-start p-4">
       <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-4" ref={containerRef}>
         {/* Game Stats Bar */}
         <div className="w-full max-w-2xl px-4">
-          <div className="bg-gray-800 rounded-lg p-3 flex justify-between items-center flex-wrap gap-2">
+          <div className="bg-gray-800 rounded-lg p-3 flex justify-between items-center flex-wrap gap-2" style={{ touchAction: 'manipulation' }}>
             <div className="text-purple-400 text-lg md:text-xl font-bold">Score: {score}</div>
             <div className="text-purple-400 text-lg md:text-xl font-bold">Lives: {lives}</div>
             <div className="flex items-center gap-2 md:gap-4">
               <div className="text-green-400 text-lg md:text-xl font-bold">${money}</div>
               <button
                 onClick={openShop}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 touch-manipulation"
+                onTouchStart={openShop}
+                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
+                style={{ 
+                  touchAction: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  pointerEvents: 'auto'
+                }}
               >
                 <ShoppingBag size={20} />
               </button>
               <button
                 onClick={handleEscapePress}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 touch-manipulation"
+                onTouchStart={handleEscapePress}
+                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
+                style={{ 
+                  touchAction: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  pointerEvents: 'auto'
+                }}
               >
                 <Menu size={20} />
               </button>
               <button
                 onClick={handleMuteToggle}
-                className="text-purple-400 hover:text-purple-300 transition-colors p-3 touch-manipulation"
+                onTouchStart={handleMuteToggle}
+                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
+                style={{ 
+                  touchAction: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  pointerEvents: 'auto'
+                }}
               >
                 {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
               </button>
@@ -199,7 +223,8 @@ export const Game: React.FC = () => {
                   transform: `scale(${scale})`,
                   transformOrigin: 'top center',
                   width: CANVAS_WIDTH,
-                  height: CANVAS_HEIGHT
+                  height: CANVAS_HEIGHT,
+                  touchAction: 'none'
                 }}
                 className="relative mx-auto"
               >
@@ -208,6 +233,7 @@ export const Game: React.FC = () => {
                   width={CANVAS_WIDTH}
                   height={CANVAS_HEIGHT}
                   className="bg-gray-800 rounded-lg shadow-lg border-2 border-purple-500"
+                  style={{ touchAction: 'none' }}
                 />
 
                 {gameState === 'playing' && (
