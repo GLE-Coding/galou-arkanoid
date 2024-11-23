@@ -12,7 +12,9 @@ export const useGameControls = (
   soundManager: SoundManager,
   onTogglePause: () => void,
   onEscapePress: () => void,
-  onShopOpen: () => void
+  onShopOpen: () => void,
+  onInfoToggle: () => void,
+  onShopClose: () => void
 ) => {
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,6 +26,8 @@ export const useGameControls = (
           onTogglePause();
         } else if (e.code === 'Escape') {
           onEscapePress();
+        } else if (e.code === 'KeyI') {
+          onInfoToggle();
         }
       }
 
@@ -45,6 +49,8 @@ export const useGameControls = (
             soundManager.play('missile');
           }
         }
+      } else if (gameState === 'shop' && e.code === 'KeyB') {
+        onShopClose();
       }
     };
 
@@ -87,5 +93,5 @@ export const useGameControls = (
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState, paddle, ball, soundManager, onTogglePause, onEscapePress, onShopOpen, canvasRef]);
+  }, [gameState, paddle, ball, soundManager, onTogglePause, onEscapePress, onShopOpen, onInfoToggle, onShopClose, canvasRef]);
 };

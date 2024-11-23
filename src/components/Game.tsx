@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Volume2, VolumeX, ShoppingBag, Menu } from 'lucide-react';
+import { Volume2, VolumeX, ShoppingBag, Home, Info } from 'lucide-react';
 import { useGameState } from '../hooks/useGameState';
 import { useGameEntities } from '../hooks/useGameEntities';
 import { useCollisionSystem } from '../hooks/useCollisionSystem';
@@ -10,14 +10,15 @@ import { BallStats } from './BallStats';
 import { ComboDisplay } from './ComboDisplay';
 import { ConfirmDialog } from './ConfirmDialog';
 import { TouchControls } from './TouchControls';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../game/constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, UPGRADES } from '../game/constants';
 
 export const Game: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [richMode, setRichMode] = useState(false);
+  const [showInfoDialog, setShowInfoDialog] = useState(false);
+  const [godMode, setGodMode] = useState(false);
   const [scale, setScale] = useState(1);
 
   const {
@@ -38,7 +39,7 @@ export const Game: React.FC = () => {
     resetCombo,
     loseLife,
     addLife
-  } = useGameState(richMode);
+  } = useGameState(godMode);
 
   const {
     paddleRef,
@@ -124,8 +125,9 @@ export const Game: React.FC = () => {
   };
 
   const handleUpgradePurchase = (upgrade: any) => {
-    if (money >= upgrade.cost) {
-      spendMoney(upgrade.cost);
+    const cost = godMode ? 0 : upgrade.cost;
+    if (money >= cost) {
+      spendMoney(cost);
       soundManagerRef.current.play('purchase');
       
       if (upgrade.id === 'extra-life') {
@@ -136,6 +138,24 @@ export const Game: React.FC = () => {
     }
   };
 
+  const handleInfoToggle = () => {
+    if (showInfoDialog) {
+      if (gameState === 'paused') {
+        togglePause();
+      }
+    } else if (gameState === 'playing') {
+      togglePause();
+    }
+    setShowInfoDialog(!showInfoDialog);
+  };
+
+  const handleInfoClose = () => {
+    if (gameState === 'paused') {
+      togglePause();
+    }
+    setShowInfoDialog(false);
+  };
+
   useGameControls(
     canvasRef,
     gameState,
@@ -144,7 +164,9 @@ export const Game: React.FC = () => {
     soundManagerRef.current,
     togglePause,
     handleEscapePress,
-    openShop
+    openShop,
+    handleInfoToggle,
+    closeShop
   );
 
   useGameLoop(
@@ -193,7 +215,21 @@ export const Game: React.FC = () => {
                   pointerEvents: 'auto'
                 }}
               >
-                <Menu size={20} />
+                <Home size={20} />
+              </button>
+              <button
+                onClick={handleInfoToggle}
+                onTouchStart={(e) => { e.preventDefault(); handleInfoToggle(); }}
+                className="text-purple-400 hover:text-purple-300 transition-colors p-3 z-50"
+                style={{ 
+                  touchAction: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  pointerEvents: 'auto'
+                }}
+              >
+                <Info size={20} />
               </button>
               <button
                 onClick={handleMuteToggle}
@@ -280,7 +316,7 @@ export const Game: React.FC = () => {
 
                 {gameState === 'menu' && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded-lg">
-                    <h1 className="text-2xl md:text-4xl font-bold text-purple-400 mb-6 md:mb-8">ARKANOID</h1>
+                    <h1 className="text-2xl md:text-4xl font-bold text-purple-400 mb-6 md:mb-8">GALOU ARKANOID</h1>
                     <div className="space-y-4">
                       <button
                         onClick={handleStartGame}
@@ -291,13 +327,13 @@ export const Game: React.FC = () => {
                       <div className="flex items-center justify-center gap-2">
                         <input
                           type="checkbox"
-                          id="richMode"
-                          checked={richMode}
-                          onChange={(e) => setRichMode(e.target.checked)}
+                          id="godMode"
+                          checked={godMode}
+                          onChange={(e) => setGodMode(e.target.checked)}
                           className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
                         />
-                        <label htmlFor="richMode" className="text-purple-300 text-sm md:text-base">
-                          Rich Mode
+                        <label htmlFor="godMode" className="text-purple-300 text-sm md:text-base">
+                          God Mode
                         </label>
                       </div>
                     </div>
@@ -331,16 +367,6 @@ export const Game: React.FC = () => {
                 )}
               </div>
             </div>
-
-            {/* Controls Info */}
-            <div className="text-gray-400 text-center text-xs md:text-sm mb-4">
-              <p className="mb-1 md:mb-2">Controls:</p>
-              <p>Move paddle with mouse, touch, or arrow keys</p>
-              <p>Tap screen, press SPACE, or click to launch ball</p>
-              <p>Press E to fire missile (if equipped)</p>
-              <p>Press B to open shop</p>
-              <p>Press P to pause</p>
-            </div>
           </div>
 
           {/* Stats Sidebar */}
@@ -357,17 +383,46 @@ export const Game: React.FC = () => {
 
       <Shop
         isOpen={gameState === 'shop'}
-        money={money}
         onClose={closeShop}
+        money={money}
         onPurchase={handleUpgradePurchase}
+        upgrades={UPGRADES.map(upgrade => ({
+          ...upgrade,
+          cost: godMode ? 0 : upgrade.cost
+        }))}
       />
 
       <ConfirmDialog
         isOpen={showConfirmDialog}
-        message="Are you sure you want to exit the game?"
         onConfirm={handleConfirmExit}
         onCancel={handleCancelExit}
+        message="Are you sure you want to exit to menu?"
       />
+      
+      {/* Info Dialog */}
+      {showInfoDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 p-6 rounded-lg border-2 border-purple-500 max-w-md w-full">
+            <h2 className="text-xl font-bold text-purple-400 mb-4">Game Controls</h2>
+            <div className="space-y-2 text-gray-300">
+              <p>🖱️ Move paddle with mouse</p>
+              <p>👆 Use touch controls on mobile</p>
+              <p>⌨️ Use arrow keys on keyboard</p>
+              <p>⚡ Press SPACE or tap to launch ball</p>
+              <p>🚀 Press E to fire missile (if equipped)</p>
+              <p>🛍️ Press B to open shop</p>
+              <p>⏸️ Press P to pause</p>
+              <p>ℹ️ Press I to show/hide controls</p>
+            </div>
+            <button
+              onClick={handleInfoClose}
+              className="mt-6 w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-bold"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

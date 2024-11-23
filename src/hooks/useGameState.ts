@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { GameState, ComboState } from '../types/game';
 
-export const useGameState = (richMode: boolean = false) => {
+export const useGameState = (godMode: boolean = false) => {
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [money, setMoney] = useState(richMode ? Number.MAX_SAFE_INTEGER : 0);
+  const [money, setMoney] = useState(0);
   const [combo, setCombo] = useState<ComboState>({
     count: 0,
     earnings: 0,
@@ -17,7 +17,7 @@ export const useGameState = (richMode: boolean = false) => {
     setGameState('playing');
     setScore(0);
     setLives(3);
-    setMoney(richMode ? Number.MAX_SAFE_INTEGER : 0);
+    setMoney(0);
     resetCombo();
   };
 
@@ -47,13 +47,11 @@ export const useGameState = (richMode: boolean = false) => {
   };
 
   const addMoney = (amount: number) => {
-    if (!richMode) {
-      setMoney(prev => prev + amount);
-    }
+    setMoney(prev => prev + amount);
   };
 
   const spendMoney = (amount: number) => {
-    if (!richMode) {
+    if (!godMode) {
       setMoney(prev => prev - amount);
     }
   };
@@ -73,7 +71,7 @@ export const useGameState = (richMode: boolean = false) => {
 
   const resetCombo = () => {
     setCombo(prev => {
-      if (prev.earnings > 0 && !richMode) {
+      if (prev.earnings > 0 && !godMode) {
         setMoney(money => money + prev.earnings);
       }
       return {
